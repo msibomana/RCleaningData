@@ -3,15 +3,15 @@
 # Author: MSibomana
 #
 # usage
-#   data4 <- read_data4(datadir) : reads training and test datasets from user provided directory
-#                                  and returns one merged dataset.
+#   data4 <- read_data4(datadir=".") : reads training and test datasets from current(default)
+#                                     or user provided directory and returns one merged dataset.
 #   data5 <- make_data5(data4) : Creates a new dataset with averages from data4 of each variable 
 #                                for each activity and each subject
-#   data5 <- read_data5(datadir) : calls make_data5(read_data4(datadir))
+#   data5 <- read_data5(datadir=".") : calls make_data5(read_data4(datadir))
 #
 #   write_data5(data5, filename): writes data5 to filename in text format without row names
 #
-#   read_write_data5(datadir, filename): calls write_data5(read_data5(datadir),filename)
+#   read_write_data5(filename,datadir="."): calls write_data5(read_data5(datadir),filename)
 
 library(data.table)
 library(dplyr)
@@ -34,7 +34,7 @@ read_dataset <- function(datadir,dset,lbl) {
     res
 }
 
-read_data4 <- function(datadir) {
+read_data4 <- function(datadir=".") {
     lbl <- fread(file.path(datadir,"features.txt"))
     train <- read_dataset(datadir,"train",lbl$V2)
     test <- read_dataset(datadir,"test",lbl$V2)
@@ -51,7 +51,7 @@ make_data5 <- function(data4) {
     data5 <- aggregate(data4[4:69], by=criteria, mean)
 }
 
-read_data5 <- function(datadir) {
+read_data5 <- function(datadir=".") {
     make_data5(read_data4(datadir))
 }
 
@@ -59,6 +59,6 @@ write_data5 <- function(data5, fname) {
   write.table(arrange(data5,Subject,Activity),fname,row.names = FALSE)
 }
 
-read_write_data5 <- function(datadir, fname) {
+read_write_data5 <- function(fname, datadir=".") {
   write_data5(read_data5(datadir), fname)
 }
